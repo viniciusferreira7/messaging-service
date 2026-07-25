@@ -1,7 +1,20 @@
 services:
   rabbitmq:
-    image: rabbitmq:4.3.3-management-alpine
+    image: rabbitmq:4.3.4-management-alpine
     container_name: marketplace-rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-admin}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-admin}
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+
+volumes:
+  rabbitmq_data:
